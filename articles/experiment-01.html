@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Experiment 01: forecasting 24-hour realized volatility of BTC and ETH with classical regression and ML.">
+  <meta name="theme-color" content="#101e2b">
+  <title>Experiment 01 — Forecasting 24h Volatility · Volatility Lab</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <header class="site-header"><div class="container nav"><a href="../" class="brand"><span class="brand-mark">V<span>·</span>L</span><span>Volatility Lab</span></a><nav aria-label="Main navigation"><a href="../#experiments">All experiments</a><a href="https://github.com/olegkozik" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav></div></header>
+  <main class="article-main container">
+    <a class="back-link" href="../">← All experiments</a>
+    <div class="eyebrow accent">EXPERIMENT 01 <span class="sep">/</span> REGRESSION <span class="sep">/</span> LEARNING PROJECT</div>
+    <h1>Forecasting 24-hour<br><em>realized volatility.</em></h1>
+    <p class="article-lede">Can additional market features and different regression algorithms outperform a classical HAR volatility forecast for BTC and ETH?</p>
+    <div class="article-meta"><span>Assets: BTC / ETH</span><span>Target: forward 24h RV</span><span>Status: draft findings</span></div>
+    <section class="article-section"><h2>Why I tried this</h2><p>As an independent exercise inspired by Chapter 2 of Aurélien Géron's <i>Hands-On Machine Learning</i>, I built a full forecasting workflow: features, baselines, expanding-window validation, model comparison, tuning, and held-out testing.</p><p>The unexpected part was the disagreement between evaluation metrics: some features improved RMSE while worsening QLIKE. That changed the direction of the experiments.</p></section>
+    <section class="article-section"><h2>Approach</h2><p>The baseline is a heterogeneous autoregressive (HAR) model built on realized volatility over daily, weekly, and monthly windows. I explored Deribit DVOL, trading volume, returns, volatility percentile ranks, and day-of-week effects.</p><p>I compared linear and robust regression, regularized estimators, LinearSVR and tree-based methods. Evaluation used expanding-window, monthly walk-forward validation, followed by a separate January–October 2026 test period.</p></section>
+    <section class="article-section"><h2>Preliminary held-out results</h2><p>Below are test-set errors reported in the draft research note. Lower is better for both metrics. These results remain subject to code/data consistency checks before the final release.</p>
+    <div class="table-wrap"><table><thead><tr><th>Asset</th><th>Model</th><th>RMSE</th><th>QLIKE</th></tr></thead><tbody><tr><td>BTC</td><td>HAR baseline</td><td>0.1296</td><td>0.2104</td></tr><tr class="highlight-row"><td>BTC</td><td>LinearSVR</td><td>0.1122</td><td>0.1518</td></tr><tr><td>ETH</td><td>HAR baseline</td><td>0.1810</td><td>0.2150</td></tr><tr class="highlight-row"><td>ETH</td><td>LinearSVR</td><td>0.1728</td><td>0.1741</td></tr></tbody></table></div>
+    <p class="small-note">Comparison is with the HAR baseline on the same test observations. These are forecasting errors, not trading returns.</p></section>
+    <section class="article-section"><h2>What I learned</h2><p>Additional predictors do not have a single, algorithm-independent value. A feature set that makes one model worse under QLIKE can be useful in combination with regularization or a different loss function.</p><p>My next experiment is to examine intraday seasonality and known economic events, particularly whether they help reduce underestimation of volatility spikes.</p></section>
+    <div class="article-cta"><h2>Code & full report</h2><p>The complete research note and versioned, reproducible code will be linked here when the initial public release is ready. For now, follow the project's GitHub profile.</p><a class="btn btn-primary" href="https://github.com/olegkozik" target="_blank" rel="noopener noreferrer">GitHub profile ↗</a></div>
+  </main>
+  <footer class="container footer"><span>© 2026 Volatility Lab</span><a href="../">Back to journal ↑</a></footer>
+</body>
+</html>
