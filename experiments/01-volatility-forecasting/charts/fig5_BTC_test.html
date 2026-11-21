@@ -3,6 +3,47 @@
 <head>
     <meta charset="utf-8" />
     <style>html, body {height: 100%;}</style>
+  <!-- Volatility Lab Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KSH0YRSKS1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KSH0YRSKS1');
+
+    // Custom events for the links on Volatility Lab.
+    document.addEventListener('click', function(event) {
+      const target = event.target;
+      const link = target && target.closest ? target.closest('a[href]') : null;
+      if (!link) return;
+      let destination;
+      try {
+        destination = new URL(link.getAttribute('href'), document.baseURI);
+      } catch (_) { return; }
+
+      const path = destination.pathname.toLowerCase();
+      let name = null;
+      if (path.endsWith('/feed.xml')) name = 'rss_click';
+      else if (path.endsWith('.pdf')) name = 'pdf_click';
+      else if (path.endsWith('.xlsx')) name = 'excel_file_click';
+      else if (path.endsWith('/reports/') || path.endsWith('/reports/index.html'))
+        name = 'excel_reports_click';
+      else if (path.includes('/charts/') && path.endsWith('.html'))
+        name = 'interactive_chart_click';
+      else if (path.includes('/experiments/') && destination.hash === '#discussion')
+        name = 'join_discussion_click';
+      else if (link.closest('.feature-card') && path.includes('/experiments/'))
+        name = 'read_experiment_click';
+      else if (destination.hostname === 'github.com' &&
+               path.startsWith('/olegkozik/volatility_forecasting') &&
+               !path.includes('/issues'))
+        name = 'source_code_click';
+
+      if (name && typeof gtag === 'function') {
+        gtag('event', name, { link_url: destination.href });
+      }
+    }, true);
+  </script>
 </head>
 <body>
     <div style="height:850px; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>

@@ -76,6 +76,47 @@
     .comments-placeholder strong{color:#243b42;font-size:15px}
     @media(max-width:760px){.feedback-section{padding:24px 20px}.feedback-actions .btn{width:100%}}
   </style>
+  <!-- Volatility Lab Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KSH0YRSKS1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KSH0YRSKS1');
+
+    // Custom events for the links on Volatility Lab.
+    document.addEventListener('click', function(event) {
+      const target = event.target;
+      const link = target && target.closest ? target.closest('a[href]') : null;
+      if (!link) return;
+      let destination;
+      try {
+        destination = new URL(link.getAttribute('href'), document.baseURI);
+      } catch (_) { return; }
+
+      const path = destination.pathname.toLowerCase();
+      let name = null;
+      if (path.endsWith('/feed.xml')) name = 'rss_click';
+      else if (path.endsWith('.pdf')) name = 'pdf_click';
+      else if (path.endsWith('.xlsx')) name = 'excel_file_click';
+      else if (path.endsWith('/reports/') || path.endsWith('/reports/index.html'))
+        name = 'excel_reports_click';
+      else if (path.includes('/charts/') && path.endsWith('.html'))
+        name = 'interactive_chart_click';
+      else if (path.includes('/experiments/') && destination.hash === '#discussion')
+        name = 'join_discussion_click';
+      else if (link.closest('.feature-card') && path.includes('/experiments/'))
+        name = 'read_experiment_click';
+      else if (destination.hostname === 'github.com' &&
+               path.startsWith('/olegkozik/volatility_forecasting') &&
+               !path.includes('/issues'))
+        name = 'source_code_click';
+
+      if (name && typeof gtag === 'function') {
+        gtag('event', name, { link_url: destination.href });
+      }
+    }, true);
+  </script>
 </head>
 <body>
 <header class="site-header"><div class="container nav"><a href="../../" class="brand"><span class="brand-mark">V<span>·</span>L</span><span>Volatility Lab</span></a><nav aria-label="Main navigation"><a href="../../#experiments">All experiments</a><a href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">Source code ↗</a></nav></div></header>
@@ -86,8 +127,8 @@
     <h1>Volatility <em>Forecasting</em></h1>
     <p class="article-lede">Hourly forecasts of forward 24-hour realized volatility using HAR benchmarks, market features and machine learning.</p>
     <div class="article-meta"><span>2021–2026 data</span><span>24-hour horizon</span><span>BTC / ETH</span><span>Research note · Draft</span></div>
-    <div class="paper-buttons"><a class="btn btn-primary" href="#abstract">Read full study ↓</a><a class="btn btn-quiet" href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">Source code ↗</a><a class="btn btn-quiet" id="paper-download" href="paper.pdf" target="_blank" rel="noopener noreferrer" hidden>Download PDF ↗</a><span class="btn btn-pending" id="paper-pending">PDF · pending verification</span><a class="btn btn-quiet" href="reports/">Excel reports ↗</a></div>
-    <p class="draft-disclaimer">This HTML edition follows the existing research note. Figures and metrics are presented as draft findings until the final code/data consistency checks and the verified reports are published.</p>
+    <div class="paper-buttons"><a class="btn btn-quiet" href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">Source code ↗</a><a class="btn btn-quiet" id="paper-download" href="Research_Note.pdf" target="_blank" rel="noopener noreferrer" hidden>Download PDF ↗</a><span class="btn btn-pending" id="paper-pending">PDF · pending verification</span><a class="btn btn-quiet" href="reports/" target="_blank" rel="noopener noreferrer">Excel reports ↗</a></div>
+    <p class="draft-disclaimer">This HTML edition follows the existing research note.</p>
   </div>
   <div class="paper-toc"><h2>In this article</h2><nav aria-label="Table of contents"><a href="#abstract">Abstract</a><a href="#data-methodology">Data &amp; methodology</a><a href="#validation">Validation &amp; experiments</a><a href="#test">Held-out test</a><a href="#conclusion">Conclusion</a></nav></div>
   <article class="paper-body">
@@ -145,19 +186,27 @@
 <p>Replacing the 30-day RV component of HAR with DVOL and incorporating day-of-week effects improved validation RMSE for both assets, although these improvements were accompanied by higher QLIKE values. Additional features, including trading volume, returns, and historical volatility percentile ranks, provided algorithm-dependent benefits rather than consistent improvements across all algorithms. The extended feature set did not provide consistent improvements across algorithms. Its benefits were more evident for regularized linear estimators, particularly LinearSVR and ElasticNet, suggesting that the effectiveness of additional predictors depends on the estimation method.</p>
 <p>On the held-out test, LinearSVR achieved the lowest RMSE and QLIKE for BTC. For ETH, HistGB achieved the lowest RMSE, while LinearSVR provided the best QLIKE.</p>
 <p>Overall, the findings suggest that feature selection, regression methodology, and the choice of evaluation metric all influence volatility forecasting performance. Improvements in one metric do not necessarily translate into improvements in another, highlighting the importance of evaluating forecasting models using multiple complementary criteria.</p>
-<p>Code and data availability: <a class="paper-inline-link" href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">GitHub repository</a>.</p>
   </article>
-  <section class="article-cta"><h2>Explore or reproduce the experiment</h2><p>Browse the complete study and interactive charts above, or reproduce the experiment from source. The verified PDF and Excel reports are published here in the Experiment 01 folder when ready.</p><a class="btn btn-primary" href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">View source code ↗</a> <a class="btn btn-quiet" href="reports/">Excel reports ↗</a></section>
+  <section class="article-cta"><h2>Explore or reproduce the experiment</h2><p>Browse the complete study and interactive charts above, or reproduce the experiment from source. The verified PDF and Excel reports are published here in the Experiment 01 folder when ready.</p><a class="btn btn-primary" href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">View source code ↗</a> <a class="btn btn-quiet" href="reports/" target="_blank" rel="noopener noreferrer">Excel reports ↗</a></section>
   <section class="feedback-section" id="discussion" aria-labelledby="discussion-heading">
     <div class="eyebrow accent">OPEN REVIEW</div>
     <h2 id="discussion-heading">Discussion &amp; feedback</h2>
-    <p>Questions, reproducibility checks, potential leakage, and methodological critiques are welcome. If you spot a problem, please describe the relevant section and how it might affect the result.</p>
-    <div class="feedback-actions">
-      <a class="btn btn-primary" href="https://github.com/olegkozik/volatility_forecasting/issues/new?title=Experiment%2001%3A%20feedback%20or%20reproducibility%20issue&amp;body=%2A%2ALocation%20in%20the%20study%3A%2A%2A%0A%0A%2A%2AObservation%20/%20question%3A%2A%2A%0A%0A%2A%2AExpected%20or%20suggested%20correction%3A%2A%2A%0A" target="_blank" rel="noopener noreferrer">Report an issue on GitHub ↗</a>
-      <a class="btn btn-quiet" href="https://github.com/olegkozik/volatility_forecasting/issues" target="_blank" rel="noopener noreferrer">View open issues ↗</a>
-    </div>
-    <!-- Giscus will be embedded here after GitHub Discussions is enabled in olegkozik/volatility_lab. -->
-    <div id="comments-embed" class="comments-placeholder"><strong>Article comments</strong><span>The on-page discussion will be enabled via GitHub Discussions and Giscus. For now, feedback works through the links above.</span></div>
+    <p>Questions, reproducibility checks, potential data leakage, and methodological critiques are welcome. Feel free to share your thoughts below.</p>
+    <script src="https://giscus.app/client.js"
+        data-repo="olegkozik/volatility_lab"
+        data-repo-id="R_kgDOV2X0HA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOV2X0HM4DLpck"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
   </section>
 </main>
 <footer class="container footer"><span>© 2026 Volatility Lab</span><a href="../../">Back to all experiments ↑</a></footer>
@@ -165,8 +214,8 @@
 <script>
 (function(){
 
-  // PDF button appears automatically when paper.pdf is uploaded.
-  fetch('paper.pdf', {method:'HEAD'}).then(response=>{
+  // PDF button appears automatically when Research_Note.pdf is available.
+  fetch('Research_Note.pdf', {method:'HEAD'}).then(response=>{
     if(response.ok){
       document.getElementById('paper-download').hidden=false;
       document.getElementById('paper-pending').hidden=true;

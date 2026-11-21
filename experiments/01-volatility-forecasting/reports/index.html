@@ -4,6 +4,47 @@
 <title>Experiment 01 — Excel Reports · Volatility Lab</title>
 <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../../../assets/styles.css">
 <style>.report-page{max-width:870px;margin:0 auto;padding:75px 30px 130px}.report-page h1{font-size:clamp(32px,5vw,50px);line-height:1.18;letter-spacing:-.045em}.report-page p{color:#52666e;line-height:1.7}.download-table{border-collapse:collapse;width:100%;background:#fff;margin:28px 0;border:1px solid #dbe0df}.download-table th,.download-table td{padding:15px;border-bottom:1px solid #dbe0df;text-align:left}.download-table th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#60757a}.report-link{color:#174a4a;text-decoration:underline;font-weight:700}.pending{font-size:13px;color:#738087}[hidden]{display:none!important}</style>
+  <!-- Volatility Lab Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KSH0YRSKS1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KSH0YRSKS1');
+
+    // Custom events for the links on Volatility Lab.
+    document.addEventListener('click', function(event) {
+      const target = event.target;
+      const link = target && target.closest ? target.closest('a[href]') : null;
+      if (!link) return;
+      let destination;
+      try {
+        destination = new URL(link.getAttribute('href'), document.baseURI);
+      } catch (_) { return; }
+
+      const path = destination.pathname.toLowerCase();
+      let name = null;
+      if (path.endsWith('/feed.xml')) name = 'rss_click';
+      else if (path.endsWith('.pdf')) name = 'pdf_click';
+      else if (path.endsWith('.xlsx')) name = 'excel_file_click';
+      else if (path.endsWith('/reports/') || path.endsWith('/reports/index.html'))
+        name = 'excel_reports_click';
+      else if (path.includes('/charts/') && path.endsWith('.html'))
+        name = 'interactive_chart_click';
+      else if (path.includes('/experiments/') && destination.hash === '#discussion')
+        name = 'join_discussion_click';
+      else if (link.closest('.feature-card') && path.includes('/experiments/'))
+        name = 'read_experiment_click';
+      else if (destination.hostname === 'github.com' &&
+               path.startsWith('/olegkozik/volatility_forecasting') &&
+               !path.includes('/issues'))
+        name = 'source_code_click';
+
+      if (name && typeof gtag === 'function') {
+        gtag('event', name, { link_url: destination.href });
+      }
+    }, true);
+  </script>
 </head><body>
 <header class="site-header"><div class="container nav"><a href="../../../" class="brand"><span class="brand-mark">V<span>·</span>L</span><span>Volatility Lab</span></a><nav><a href="../">← Experiment 01</a></nav></div></header>
 <main class="report-page"><a class="back-link" href="../">← Back to Experiment 01</a><div class="eyebrow accent">EXPERIMENT 01 / DOWNLOADS</div><h1>Excel reports</h1>
