@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Download verified Excel reports for Volatility Lab Experiment 01: BTC/ETH volatility forecasting.">
+<title>Experiment 01 — Excel Reports · Volatility Lab</title>
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../../../assets/styles.css">
+<style>.report-page{max-width:870px;margin:0 auto;padding:75px 30px 130px}.report-page h1{font-size:clamp(32px,5vw,50px);line-height:1.18;letter-spacing:-.045em}.report-page p{color:#52666e;line-height:1.7}.download-table{border-collapse:collapse;width:100%;background:#fff;margin:28px 0;border:1px solid #dbe0df}.download-table th,.download-table td{padding:15px;border-bottom:1px solid #dbe0df;text-align:left}.download-table th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#60757a}.report-link{color:#174a4a;text-decoration:underline;font-weight:700}.pending{font-size:13px;color:#738087}[hidden]{display:none!important}</style>
+</head><body>
+<header class="site-header"><div class="container nav"><a href="../../../" class="brand"><span class="brand-mark">V<span>·</span>L</span><span>Volatility Lab</span></a><nav><a href="../">← Experiment 01</a></nav></div></header>
+<main class="report-page"><a class="back-link" href="../">← Back to Experiment 01</a><div class="eyebrow accent">EXPERIMENT 01 / DOWNLOADS</div><h1>Excel reports</h1>
+<p>This page hosts the final verification reports alongside the paper and figures. Each download becomes active when its corresponding Excel file is published. Before the server reproduction check is complete, reports are marked as pending.</p>
+<table class="download-table"><thead><tr><th>Report</th><th>File</th></tr></thead><tbody>
+<tr><td>BTC results</td><td><a href="BTC_results.xlsx" class="report-link" hidden>Download Excel ↗</a><span class="pending">Pending verification</span></td></tr>
+<tr><td>ETH results</td><td><a href="ETH_results.xlsx" class="report-link" hidden>Download Excel ↗</a><span class="pending">Pending verification</span></td></tr>
+<tr><td>BTC tuning</td><td><a href="tuning/BTC_tuning.xlsx" class="report-link" hidden>Download Excel ↗</a><span class="pending">Pending verification</span></td></tr>
+<tr><td>ETH tuning</td><td><a href="tuning/ETH_tuning.xlsx" class="report-link" hidden>Download Excel ↗</a><span class="pending">Pending verification</span></td></tr>
+<tr><td>BTC ensembles</td><td><a href="ensembles/BTC_ensembles.xlsx" class="report-link" hidden>Download Excel ↗</a><span class="pending">Pending verification</span></td></tr>
+<tr><td>ETH ensembles</td><td><a href="ensembles/ETH_ensembles.xlsx" class="report-link" hidden>Download Excel ↗</a><span class="pending">Pending verification</span></td></tr>
+</tbody></table>
+<p>Source code: <a class="report-link" href="https://github.com/olegkozik/volatility_forecasting">volatility_forecasting</a>. Research article: <a class="report-link" href="../">Experiment 01</a>.</p>
+</main><footer class="container footer"><span>© 2026 Volatility Lab</span><a href="../../../">Back to all experiments ↑</a></footer>
+<script>document.querySelectorAll('a.report-link[href$=".xlsx"]').forEach(a=>{fetch(a.getAttribute('href'),{method:'HEAD'}).then(r=>{if(r.ok){a.hidden=false;const status=a.nextElementSibling;if(status)status.hidden=true}}).catch(()=>{})})</script>
+</body></html>
