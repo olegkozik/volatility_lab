@@ -16,6 +16,7 @@
   <title>Volatility Lab — An open ML research journal</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/styles.css">
+  <link rel="alternate" type="application/rss+xml" title="Volatility Lab — new experiments" href="feed.xml">
 </head>
 <body>
   <header class="site-header">
@@ -33,20 +34,20 @@
       <div class="hero-footer"><span>BTC / ETH</span><span>Reproducible experiments</span><span>Regression → options research</span></div>
     </section>
     <section id="experiments" class="container section">
-      <div class="section-head"><div><div class="eyebrow accent">RESEARCH LOG</div><h2>Experiments & notes</h2></div><p>Each entry captures a question, an experiment, and what I learned — including what didn't work.</p></div>
+      <div class="section-head"><div><div class="eyebrow accent">RESEARCH LOG</div><h2>Experiments & notes</h2></div></div>
       <article class="feature-card">
-        <div class="feature-top"><span class="index-number">01 / FIRST EXPERIMENT</span><span class="pill">Research note · Draft</span></div>
+        <div class="feature-top"><span class="index-number">01 / FIRST EXPERIMENT</span><span class="pill">Research note</span></div>
         <h3><a href="experiments/01-volatility-forecasting/">Forecasting 24-hour realized volatility</a></h3>
-        <p>A practical study inspired by Chapter 2 of Aurélien Géron's ML book. HAR baselines, richer features, multiple regressors, and the surprising trade-off between RMSE and QLIKE.</p>
-        <div class="tags"><span>BTC & ETH</span><span>HAR</span><span>LinearSVR</span><span>Walk-forward validation</span></div>
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 26px"><a class="text-link" href="experiments/01-volatility-forecasting/">Read experiment <span aria-hidden="true">→</span></a><a class="text-link" href="experiments/01-volatility-forecasting/#discussion">Discussion &amp; feedback <span aria-hidden="true">→</span></a></div>
+        <p>The study compares HAR baselines, additional market features, and regression models, highlighting the trade-off between RMSE and QLIKE.</p>
+        <div class="tags"><span>5 RV estimators</span></div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 26px"><a class="text-link" href="experiments/01-volatility-forecasting/">Read experiment <span aria-hidden="true">→</span></a><a class="text-link" href="experiments/01-volatility-forecasting/#discussion">Join discussion <span aria-hidden="true">→</span></a></div>
       </article>
       <div class="upcoming-grid">
         <article class="next-card"><div class="feature-top"><span class="index-number">02 / PLANNED</span><span class="pill muted">On the roadmap</span></div><h3>Seasonality & economic events</h3><p>Does intraday seasonality or the economic calendar improve forward volatility forecasts, especially during sudden market moves?</p><div class="tags"><span>Calendar</span><span>Feature engineering</span></div></article>
         <article class="next-card"><div class="feature-top"><span class="index-number">03 / PLANNED</span><span class="pill muted">On the roadmap</span></div><h3>From forecasts to options</h3><p>Compare volatility forecasts with option prices and explore what survives realistic backtesting and risk constraints.</p><div class="tags"><span>Implied volatility</span><span>Backtesting</span></div></article>
       </div>
     </section>
-    <section id="about" class="about-band"><div class="container about-grid"><div><div class="eyebrow">ABOUT THE PROJECT</div><h2>Built in public,<br>without pretending to have all the answers.</h2></div><div><p>I'm learning machine learning by applying each new technique to a concrete, evolving research problem. This is a learning project, not investment advice or a claim of scientific novelty.</p><p>Code, methods and findings will be shared as experiments are completed. The goal is to understand both the successes and the failures.</p><a class="text-link light" href="https://github.com/olegkozik" target="_blank" rel="noopener noreferrer">Follow the work on GitHub ↗</a></div></div></section>
+    <section id="about" class="about-band"><div class="container about-grid"><div><div class="eyebrow">ABOUT THE PROJECT</div><h2>Built in public,<br>without pretending to have all the answers.</h2></div><div><p>I'm learning machine learning by applying each new technique to a concrete, evolving research problem. This is a learning project, not investment advice or a claim of scientific novelty.</p><p>Code, methods and findings will be shared as experiments are completed. The goal is to understand both the successes and the failures.</p><a class="text-link light" href="feed.xml" type="application/rss+xml" aria-label="Subscribe to Volatility Lab updates via RSS">Subscribe via RSS ↗</a></div></div></section>
   </main>
   <footer class="container footer"><span>© 2026 Volatility Lab</span><span>Research notes · Code · Open questions</span><a href="https://github.com/olegkozik">GitHub ↗</a></footer>
 </body>

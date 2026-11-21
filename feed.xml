@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Volatility Lab — Experiments &amp; Notes</title>
+    <link>https://olegkozik.github.io/volatility_lab/</link>
+    <description>New research notes and reproducible machine-learning experiments on cryptocurrency volatility.</description>
+    <language>en</language>
+    <atom:link href="https://olegkozik.github.io/volatility_lab/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Experiment 01 — Forecasting 24-hour Realized Volatility</title>
+      <link>https://olegkozik.github.io/volatility_lab/experiments/01-volatility-forecasting/</link>
+      <guid isPermaLink="true">https://olegkozik.github.io/volatility_lab/experiments/01-volatility-forecasting/</guid>
+      <pubDate>Sat, 21 Nov 2026 11:14:55 GMT</pubDate>
+      <description>A comparison of HAR benchmarks, additional market features, and regression models for forecasting realized volatility. The study combines five RV estimators and examines RMSE and QLIKE.</description>
+    </item>
+  </channel>
+</rss>
