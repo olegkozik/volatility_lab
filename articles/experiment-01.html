@@ -1,40 +1,158 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Experiment 01: forecasting 24-hour realized volatility of BTC and ETH with classical regression and ML.">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Volatility Lab Experiment 01: Full research note on BTC/ETH 24-hour realized volatility forecasting, including methodology, seven tables and interactive test forecasts.">
   <meta name="theme-color" content="#101e2b">
-  <title>Experiment 01 — Forecasting 24h Volatility · Volatility Lab</title>
-  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/styles.css">
+  <title>Experiment 01 — Volatility Forecasting · Volatility Lab</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <style>
+    .research-paper {max-width:1030px}
+    .paper-head{max-width:900px}
+    .paper-head h1{font-size:clamp(38px,5.2vw,62px);margin:18px 0}
+    .paper-buttons{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 28px}
+    .paper-buttons .btn{padding:10px 15px;font-size:13px;gap:8px}
+    .research-paper .article-meta{margin:26px 0 35px}
+    .draft-disclaimer{font-size:13px;color:#52666e;background:#edf3f1;border:1px solid #d8e5e1;border-radius:10px;padding:12px 15px;max-width:850px}
+    .paper-toc{border:1px solid var(--line);border-radius:14px;padding:19px 22px;background:#fff;margin:30px 0 50px}
+    .paper-toc h2{font-size:15px;margin:0 0 13px}
+    .paper-toc nav{display:flex;flex-wrap:wrap;gap:8px 18px}
+    .paper-toc nav a{font-size:13px;font-weight:650;color:var(--accent-dark);text-decoration:underline;text-decoration-color:#b4c9c5;text-underline-offset:3px}
+    .paper-body{max-width:100%}
+    .paper-body h2{font-size:clamp(25px,3vw,32px);letter-spacing:-.035em;line-height:1.25;margin:63px 0 20px;padding-top:22px;border-top:1px solid var(--line);scroll-margin-top:18px}
+    .paper-body h3{font-size:21px;letter-spacing:-.02em;line-height:1.35;margin:37px 0 14px;scroll-margin-top:18px}
+    .paper-body h4{font-size:18px;line-height:1.4;margin:34px 0 14px;scroll-margin-top:18px}
+    .paper-body p{font-size:15.5px;line-height:1.78;color:#344852;margin:0 0 18px}
+    .paper-body .equation{font-family:Georgia,"Times New Roman",serif;background:#fff;border:1px solid var(--line);border-radius:9px;text-align:center;font-size:21px;padding:14px;margin:8px auto 24px;max-width:370px}
+    .feature-definitions{border:1px solid var(--line);border-radius:12px;padding:9px 19px;background:#fff;margin:0 0 28px}
+    .feature-definitions div{padding:9px 0;border-bottom:1px solid #e8eeeb}
+    .feature-definitions div:last-child{border-bottom:0}
+    .feature-definitions dd{margin:0;font-size:14.5px;color:#344852;line-height:1.7}
+    .paper-table-wrap{overflow-x:auto;max-width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;margin:27px 0 10px}
+    .paper-table{border-collapse:collapse;font-size:13px;min-width:max-content;width:100%;font-variant-numeric:tabular-nums}
+    .paper-table th{white-space:nowrap;font-size:11px;letter-spacing:.02em;text-transform:none}
+    .paper-table td,.paper-table th{padding:11px 13px;white-space:nowrap}
+    .paper-table td:first-child{font-weight:620}
+    .paper-table td:last-child{white-space:normal}
+    .paper-table caption{caption-side:bottom;text-align:left;background:#f8faf8;padding:10px 13px;border-top:1px solid #e6ebe9;font-size:12px;color:#53676d;font-weight:680}
+    .paper-body .table-note{font-size:12px;color:#64757c;margin-top:8px;margin-bottom:25px}
+    .paper-figure{margin:27px 0 34px}
+    .figure-zoom{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;cursor:zoom-in;transition:border-color .15s ease,box-shadow .15s ease}
+    .figure-zoom:hover{border-color:#9ebeb5;box-shadow:0 8px 22px rgba(15,45,46,.07)}
+    .paper-figure img{display:block;width:100%;height:auto;max-width:100%;border-radius:5px}
+    .paper-figure figcaption{font-size:12px;color:#586e75;line-height:1.55;padding-top:8px}
+    .zoom-hint{color:var(--accent)}
+    .interactive-cta{border:1px solid #cde0d8;border-radius:14px;padding:22px;background:#e8f1ed;display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;margin:-9px 0 36px}
+    .interactive-cta strong{font-size:16px}
+    .interactive-cta p{font-size:13px;line-height:1.5;margin:6px 0 0;max-width:580px}
+    .interactive-actions{display:flex;flex-direction:column;gap:9px;min-width:205px}
+    .interactive-actions a{display:block;border-radius:8px;background:#153b3b;color:#fff;padding:9px 12px;font-size:13px;font-weight:700;text-align:center}
+    .interactive-actions a:hover{background:#265b57;color:#fff}
+    .paper-inline-link{text-decoration:underline;text-underline-offset:3px;color:var(--accent-dark)}
+    #image-dialog{max-width:96vw;max-height:96vh;width:calc(100vw - 26px);height:calc(100vh - 26px);padding:12px;border:none;border-radius:12px;background:#eef2f1;color:#1a3036;box-shadow:0 18px 90px rgba(4,20,24,.3)}
+    #image-dialog::backdrop{background:rgba(8,21,25,.83)}
+    .lightbox-controls{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 10px;font-size:13px;font-weight:700}
+    .lightbox-controls a{text-decoration:underline;color:var(--accent-dark)}
+    .lightbox-controls button{background:#102b36;color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;font:inherit}
+    #image-dialog img{display:block;max-width:100%;width:auto;max-height:calc(96vh - 85px);object-fit:contain;margin:auto}
+    @media(max-width:760px){.paper-toc{margin:26px 0 35px;padding:16px}.paper-body h2{margin-top:44px}.paper-table td,.paper-table th{padding:10px}.paper-buttons{gap:8px}.interactive-cta{padding:17px}.interactive-actions{width:100%}}
+  </style>
 </head>
 <body>
-  <header class="site-header"><div class="container nav"><a href="../" class="brand"><span class="brand-mark">V<span>·</span>L</span><span>Volatility Lab</span></a><nav aria-label="Main navigation"><a href="../#experiments">All experiments</a><a href="https://github.com/olegkozik" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav></div></header>
-  <main class="article-main container">
+<header class="site-header"><div class="container nav"><a href="../" class="brand"><span class="brand-mark">V<span>·</span>L</span><span>Volatility Lab</span></a><nav aria-label="Main navigation"><a href="../#experiments">All experiments</a><a href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">Source code ↗</a></nav></div></header>
+<main class="article-main container research-paper">
+  <div class="paper-head">
     <a class="back-link" href="../">← All experiments</a>
-    <div class="eyebrow accent">EXPERIMENT 01 <span class="sep">/</span> REGRESSION <span class="sep">/</span> LEARNING PROJECT</div>
-    <h1>Forecasting 24-hour<br><em>realized volatility.</em></h1>
-    <p class="article-lede">Can additional market features and different regression algorithms outperform a classical HAR volatility forecast for BTC and ETH?</p>
-    <div class="article-meta"><span>Assets: BTC / ETH</span><span>Target: forward 24h RV</span><span>Status: draft findings</span></div>
-    <section class="article-section"><h2>Why I tried this</h2><p>As an independent exercise inspired by Chapter 2 of Aurélien Géron's <i>Hands-On Machine Learning</i>, I built a full forecasting workflow: features, baselines, expanding-window validation, model comparison, tuning, and held-out testing.</p><p>The unexpected part was the disagreement between evaluation metrics: some features improved RMSE while worsening QLIKE. That changed the direction of the experiments.</p></section>
-    <section class="article-section"><h2>Approach</h2><p>The baseline is a heterogeneous autoregressive (HAR) model built on realized volatility over daily, weekly, and monthly windows. I explored Deribit DVOL, trading volume, returns, volatility percentile ranks, and day-of-week effects.</p><p>I compared linear and robust regression, regularized estimators, LinearSVR and tree-based methods. Evaluation used expanding-window, monthly walk-forward validation, followed by a separate January–October 2026 test period.</p></section>
-    <section class="article-section"><h2>Preliminary held-out results</h2><p>Below are test-set errors reported in the draft research note. Lower is better for both metrics. These results remain subject to code/data consistency checks before the final release.</p>
-    <div class="table-wrap"><table><thead><tr><th>Asset</th><th>Model</th><th>RMSE</th><th>QLIKE</th></tr></thead><tbody><tr><td>BTC</td><td>HAR baseline</td><td>0.1296</td><td>0.2104</td></tr><tr class="highlight-row"><td>BTC</td><td>LinearSVR</td><td>0.1122</td><td>0.1518</td></tr><tr><td>ETH</td><td>HAR baseline</td><td>0.1810</td><td>0.2150</td></tr><tr class="highlight-row"><td>ETH</td><td>LinearSVR</td><td>0.1728</td><td>0.1741</td></tr></tbody></table></div>
-    <p class="small-note">Comparison is with the HAR baseline on the same test observations. These are forecasting errors, not trading returns.</p></section>
-    <section class="article-section">
-      <h2>Figures from the draft analysis</h2>
-      <p>Browse the key figures below without installing anything. These are preliminary plots from the initial research files, pending final code/data consistency checks for the release.</p>
-      <div class="research-figures">
-        <figure><a href="../assets/research/fig1_price_rv_dvol.png"><img src="../assets/research/fig1_price_rv_dvol.png" alt="BTC and ETH prices and RV and DVOL history" loading="lazy"></a><figcaption>Figure 1 — BTC and ETH market prices, RV and DVOL</figcaption></figure>
-        <figure><a href="../assets/research/fig2_rv_dvol_evolution.png"><img src="../assets/research/fig2_rv_dvol_evolution.png" alt="Historical evolution of RV30 and DVOL for BTC and ETH" loading="lazy"></a><figcaption>Figure 2 — Historical evolution of RV30 and DVOL</figcaption></figure>
-        <figure><a href="../assets/research/fig3_validation_vs_baseline.png"><img src="../assets/research/fig3_validation_vs_baseline.png" alt="Relative validation loss by algorithm compared with OLS HAR" loading="lazy"></a><figcaption>Figure 3 — Validation loss relative to the HAR benchmark</figcaption></figure>
-        <figure><a href="../assets/research/fig4_tuning_vs_baseline.png"><img src="../assets/research/fig4_tuning_vs_baseline.png" alt="Validation performance before and after tuning" loading="lazy"></a><figcaption>Figure 4 — Before/after hyperparameter tuning</figcaption></figure>
-        <figure><a href="../assets/research/fig5_test_forecasts.png"><img src="../assets/research/fig5_test_forecasts.png" alt="BTC and ETH actual versus predicted realized volatility" loading="lazy"></a><figcaption>Figure 5 — Actual vs predicted 24-hour volatility in the held-out test</figcaption></figure>
-      </div>
-    </section>
-    <style>.research-figures{display:grid;gap:1.5rem;margin:1.5rem 0}.research-figures figure{margin:0;padding:0}.research-figures img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #d6dde5;background:#fff}.research-figures figcaption{font-size:.85rem;opacity:.8;margin-top:.45rem}</style>
-    <section class="article-section"><h2>What I learned</h2><p>Additional predictors do not have a single, algorithm-independent value. A feature set that makes one model worse under QLIKE can be useful in combination with regularization or a different loss function.</p><p>My next experiment is to examine intraday seasonality and known economic events, particularly whether they help reduce underestimation of volatility spikes.</p></section>
-    <div class="article-cta"><h2>Explore or reproduce</h2><p>View the draft figures above, or visit the code repository. Final Excel reports and the PDF research note will be available as release attachments once v1.0.0 is published. The report files are intentionally not included in git clone.</p><a class="btn btn-primary" href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">View source code ↗</a> <a class="btn btn-quiet" href="https://github.com/olegkozik/volatility_forecasting/releases" target="_blank" rel="noopener noreferrer">Releases & Excel reports ↗</a></div>
-  </main>
-  <footer class="container footer"><span>© 2026 Volatility Lab</span><a href="../">Back to journal ↑</a></footer>
-</body>
-</html>
+    <div class="eyebrow accent">EXPERIMENT 01 <span class="sep">/</span> REGRESSION <span class="sep">/</span> BTC &amp; ETH</div>
+    <h1>Volatility <em>Forecasting</em></h1>
+    <p class="article-lede">Hourly forecasts of forward 24-hour realized volatility using HAR benchmarks, market features and machine learning.</p>
+    <div class="article-meta"><span>2021–2026 data</span><span>24-hour horizon</span><span>BTC / ETH</span><span>Research note · Draft</span></div>
+    <div class="paper-buttons"><a class="btn btn-primary" href="../assets/research/Research_Note.pdf" target="_blank" rel="noopener noreferrer">Read / download PDF ↗</a><a class="btn btn-quiet" href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">Source code ↗</a><a class="btn btn-quiet" href="https://github.com/olegkozik/volatility_forecasting/releases" target="_blank" rel="noopener noreferrer">Excel reports ↗</a></div>
+    <p class="draft-disclaimer">This HTML edition follows the existing research note. Figures and metrics are presented as draft findings until the final code/data consistency checks and the v1.0.0 release are completed.</p>
+  </div>
+  <div class="paper-toc"><h2>In this article</h2><nav aria-label="Table of contents"><a href="#abstract">Abstract</a><a href="#data-methodology">Data &amp; methodology</a><a href="#validation">Validation &amp; experiments</a><a href="#test">Held-out test</a><a href="#conclusion">Conclusion</a></nav></div>
+  <article class="paper-body">
+<h2 id="abstract">1. Abstract</h2>
+<p>This study examines the predictive value of market-derived features for forecasting realized volatility (RV) in BTC and ETH. Using high-frequency cryptocurrency market data, we construct hourly forecasts of forward 24-hour annualized RV. We investigate several predictors: RV, trading volume, returns, historical volatility percentile ranks, options-implied volatility (DVOL), and calendar effects. Each feature is examined through descriptive statistical analysis, hypothesis formulation, and out-of-sample forecasting experiments across multiple estimators.</p>
+<p>Forecasting performance is evaluated using walk-forward validation and a separate held-out test. The analysis aims to identify which features provide robust incremental information, and to explain why statistically apparent relationships do not necessarily translate into improved forecasting accuracy.</p>
+<h3 id="abstract-results">Results</h3>
+<p>The HAR-D + DoW specification reduces validation RMSE relative to HAR for both BTC and ETH. Alternative regression algorithms yield larger improvements in QLIKE than in RMSE. On the held-out test, LinearSVR outperformed the classical HAR benchmark in both metrics, reducing RMSE and QLIKE by approximately 13.4% and 27.8% for BTC, and 4.5% and 19.0% for ETH, respectively. Among the evaluated models, HistGB achieved the lowest test RMSE for ETH, while LinearSVR achieved the lowest QLIKE.</p>
+<h2 id="data-methodology">2. Data and Methodology</h2>
+<h3 id="rv-target">2.1. Realized Volatility and Forecast Target</h3>
+<p>RV is estimated from ByBit 5-minute OHLC price data using five variance estimators: close-to-close (Raw), Parkinson, Garman–Klass, Rogers–Satchell, and Yang–Zhang. The annualized variance estimates are averaged across estimators before taking the square root to obtain realized volatility. The resulting RV measures over 1-day, 7-day, and 30-day windows are denoted by rv₁, rv₇, and rv₃₀, respectively.</p>
+<p>The forecasting target is defined as:</p>
+<p class="equation" aria-label="Forecasting target y t equals RV one at t plus twenty-four">y<sub>t</sub> = rv<sub>1, t+24</sub></p>
+<h3 id="forecasting-framework">2.2. Forecasting Framework</h3>
+<p>Models are evaluated using an expanding-window walk-forward procedure. The development period extends from April 24, 2021, for BTC and April 14, 2022, for ETH, through December 31, 2025. The held-out test period covers January 1 through October 31, 2026. Test data are reserved for a held-out test, while train data is used for model development and validation. Following an initial 12-month training period, models are refitted monthly using all available historical observations and evaluated on the subsequent calendar month. The final 24 training observations are excluded to ensure that all training targets are fully observed before the validation period begins. Model selection is based exclusively on validation performance, with selected configurations subsequently evaluated on the held-out test.</p>
+<h3 id="model-evaluation">Model Evaluation and Selection</h3>
+<p>Model configurations were selected based on both RMSE and QLIKE. While RMSE provides a symmetric measure of average forecasting error, QLIKE is our primary metric for practical application because it heavily penalizes the underestimation of volatility. Initial experiments focused on RMSE revealed that adding Day-of-Week (DoW) and replacing RV30 with DVOL improved RMSE. However, this came at the cost of degraded QLIKE. Subsequent experiments were therefore designed to find a model that retains the RMSE benefits of these features while restoring or improving QLIKE.</p>
+<h2 id="validation">3. Validation</h2>
+<h3 id="features">3.1. Feature Definitions</h3>
+<dl class="feature-definitions"><div><dd>rv₁, rv₇, rv₃₀ — RV over 1, 7, and 30 days (see 2.1).</dd></div><div><dd>vol_d, vol_w — trading volume aggregated over rolling 24-hour and 168-hour windows.</dd></div><div><dd>ret_d, ret_w — log returns calculated over 24-hour and 168-hour periods.</dd></div><div><dd>prank₁, prank₇, prank₃₀ — historical percentile ranks of the corresponding RV estimates, calculated against the preceding 8,760 hourly observations.</dd></div><div><dd>DVOL — Deribit DVOL index.</dd></div><div><dd>dow₁–dow₆ — day-of-week dummy variables, with Monday as the reference category.</dd></div></dl>
+<div class="paper-table-wrap"><table class="paper-table"><thead><tr><th scope="col">Model</th><th scope="col">Specification</th></tr></thead><tbody><tr><td>Naive</td><td>Forecast at t+24 = current rv₁ (persistence)</td></tr><tr><td>HAR</td><td>rv₁, rv₇, rv₃₀</td></tr><tr><td>HAR-D</td><td>rv₁, rv₇, DVOL</td></tr><tr><td>HAR-X</td><td>HAR-D + DoW</td></tr><tr><td>HAR-X-All</td><td>HAR-X + vol_d, vol_w, ret_d, ret_w, prank₁, prank₇, prank₃₀</td></tr></tbody><caption>Table 1. Models</caption></table></div>
+<h3 id="correlations">3.2. Feature–Target Correlations</h3>
+<div class="paper-table-wrap"><table class="paper-table "><thead><tr><th scope="col">Feature</th><th scope="col">BTC Pearson</th><th scope="col">BTC Spearman</th><th scope="col">ETH Pearson</th><th scope="col">ETH Spearman</th></tr></thead><tbody><tr><td>rv₁</td><td>0.61</td><td>0.65</td><td>0.62</td><td>0.66</td></tr><tr><td>rv₇</td><td>0.58</td><td>0.64</td><td>0.54</td><td>0.63</td></tr><tr><td>rv₃₀</td><td>0.44</td><td>0.53</td><td>0.41</td><td>0.51</td></tr><tr><td>prank₁</td><td>0.44</td><td>0.49</td><td>0.48</td><td>0.55</td></tr><tr><td>prank₇</td><td>0.41</td><td>0.47</td><td>0.43</td><td>0.51</td></tr><tr><td>prank₃₀</td><td>0.27</td><td>0.34</td><td>0.29</td><td>0.38</td></tr><tr><td>vol_D</td><td>0.19</td><td>0.22</td><td>0.42</td><td>0.51</td></tr><tr><td>vol_W</td><td>0.04</td><td>0.12</td><td>0.33</td><td>0.47</td></tr><tr><td>ret_D</td><td>−0.13</td><td>−0.05</td><td>−0.18</td><td>−0.07</td></tr><tr><td>ret_W</td><td>−0.26</td><td>−0.11</td><td>−0.26</td><td>−0.12</td></tr><tr><td>DVOL</td><td>0.56</td><td>0.62</td><td>0.52</td><td>0.58</td></tr></tbody><caption>Table 2. Correlations between features and target</caption></table></div>
+<p>Table 2 reports correlations between the candidate features and target. RV and DVOL exhibit the strongest positive associations with the target, while percentile ranks and trading volume show moderate relationships. Returns exhibit relatively weak negative correlations. These results provide an initial descriptive assessment of the predictors but do not establish their incremental forecasting value beyond the benchmark model.</p>
+<h3 id="experiments">3.3 Experiments</h3>
+<figure class="paper-figure"><a class="figure-zoom" href="../assets/research/fig1_price_rv_dvol.png" data-title="Figure 1. BTC and ETH prices, RV and DVOL" aria-label="Enlarge Figure 1. BTC and ETH prices, RV and DVOL"><img loading="lazy" src="../assets/research/fig1_price_rv_dvol.png" alt="Figure 1. BTC and ETH prices, RV and DVOL" /></a><figcaption>Figure 1. BTC and ETH prices, RV and DVOL <span class="zoom-hint">· Click to enlarge</span></figcaption></figure>
+<div class="paper-table-wrap"><table class="paper-table "><thead><tr><th scope="col">Asset</th><th scope="col">Model</th><th scope="col">RMSE</th><th scope="col">QLIKE</th></tr></thead><tbody><tr><td>BTC</td><td>Naive</td><td>0.230</td><td>0.618</td></tr><tr><td>BTC</td><td>HAR</td><td>0.205</td><td>0.339</td></tr><tr><td>ETH</td><td>Naive</td><td>0.296</td><td>0.482</td></tr><tr><td>ETH</td><td>HAR</td><td>0.257</td><td>0.338</td></tr></tbody><caption>Table 3. HAR vs. Naive</caption></table></div>
+<h4 id="experiment-1">Experiment 1: Replacing the 30-day RV component of HAR with DVOL, adding DoW</h4>
+<p>As shown in Table 2, DVOL exhibits a stronger correlation with target than the 30-day RV component for both BTC and ETH. This motivates testing whether replacing rv₃₀ with DVOL improves out-of-sample forecasting accuracy.</p>
+<p>Given the continuous operation of cryptocurrency markets, trading activity and volatility may exhibit systematic differences across days of the week. This experiment also tests whether incorporating day-of-week dummy variables improves the forecasting performance of HAR-D.</p>
+<figure class="paper-figure"><a class="figure-zoom" href="../assets/research/fig2_rv_dvol_evolution.png" data-title="Figure 2. Historical evolution of RV30 and DVOL for BTC and ETH" aria-label="Enlarge Figure 2. Historical evolution of RV30 and DVOL for BTC and ETH"><img loading="lazy" src="../assets/research/fig2_rv_dvol_evolution.png" alt="Figure 2. Historical evolution of RV30 and DVOL for BTC and ETH" /></a><figcaption>Figure 2. Historical evolution of RV30 and DVOL for BTC and ETH <span class="zoom-hint">· Click to enlarge</span></figcaption></figure>
+<div class="paper-table-wrap"><table class="paper-table "><thead><tr><th scope="col">Asset</th><th scope="col">Model</th><th scope="col">RMSE</th><th scope="col">QLIKE</th></tr></thead><tbody><tr><td>BTC</td><td>HAR</td><td>0.205</td><td>0.339</td></tr><tr><td>BTC</td><td>HAR-D</td><td>0.200</td><td>0.370</td></tr><tr><td>BTC</td><td>HAR-X</td><td>0.189</td><td>0.428</td></tr><tr><td>ETH</td><td>HAR</td><td>0.257</td><td>0.338</td></tr><tr><td>ETH</td><td>HAR-D</td><td>0.251</td><td>0.357</td></tr><tr><td>ETH</td><td>HAR-X</td><td>0.241</td><td>0.401</td></tr></tbody><caption>Table 4. HAR-X vs. HAR-D vs. HAR</caption></table></div>
+<p>The HAR-X specification achieves the lowest RMSE among the OLS specifications for both BTC and ETH, reducing validation RMSE by approximately 7.8% and 6.2%, respectively, relative to HAR. However, this improvement is accompanied by a substantial deterioration in QLIKE.</p>
+<h4 id="experiment-2">Experiment 2: Comparison of Regression Algorithms</h4>
+<p>The second experiment evaluates whether alternative regression algorithms improve forecasting accuracy relative to the best OLS results. The best OLS value for each metric, taken across the specifications in Table 1, serves only as a selection hurdle: an algorithm–feature combination had to beat the best OLS value for RMSE and for QLIKE separately to be considered. We compare Huber, ElasticNet, LinearSVR, histogram-based gradient boosting, trees and forest using the same expanding-window walk-forward validation procedure. Implementations and parameter settings are documented in the accompanying code.</p>
+<p>Overall, alternative regression algorithms provided limited improvements over OLS. Only ElasticNet achieved lower QLIKE for both assets. Given the limited improvements obtained with the initial configurations, we next investigate whether hyperparameter optimization can improve forecasting performance.</p>
+<div class="paper-table-wrap"><table class="paper-table "><thead><tr><th scope="col">Algorithm</th><th scope="col">BTC Model</th><th scope="col">BTC RMSE</th><th scope="col">BTC QLIKE</th><th scope="col">ETH Model</th><th scope="col">ETH RMSE</th><th scope="col">ETH QLIKE</th></tr></thead><tbody><tr><td>OLS</td><td>HAR-X / HAR</td><td>0.1885</td><td>0.3393</td><td>HAR-X / HAR</td><td>0.2411</td><td>0.3375</td></tr><tr><td>Huber</td><td>HAR-X-All</td><td>0.1901</td><td>0.3353</td><td>HAR-X / HAR</td><td>0.2447</td><td>0.3788</td></tr><tr><td>ElasticNet</td><td>HAR-X</td><td>0.1908</td><td>0.3074</td><td>HAR-X-All</td><td>0.2411</td><td>0.2926</td></tr><tr><td>LinearSVR</td><td>HAR-X-All</td><td>0.1880</td><td>0.3150</td><td>HAR-X / HAR-X-All</td><td>0.2431</td><td>0.3671</td></tr><tr><td>HistGB</td><td>HAR-X</td><td>0.2157</td><td>0.3489</td><td>HAR-X / HAR-X-All</td><td>0.2592</td><td>0.3605</td></tr><tr><td>Tree</td><td>HAR-X</td><td>0.2120</td><td>0.3650</td><td>HAR-X / HAR</td><td>0.2786</td><td>0.4453</td></tr><tr><td>Forest</td><td>HAR-X</td><td>0.2030</td><td>0.3354</td><td>HAR-X / HAR-X-All</td><td>0.2538</td><td>0.3749</td></tr></tbody><caption>Table 5. Comparison of regression algorithms (walk-forward validation)</caption></table></div>
+<p class="table-note">Note. For each algorithm and asset, RMSE and QLIKE are minimized independently across feature specifications. The OLS metrics are shown for reference. Bold indicates the lowest value within each metric and asset.</p>
+<figure class="paper-figure"><a class="figure-zoom" href="../assets/research/fig3_validation_vs_baseline.png" data-title="Figure 3. Relative validation loss by algorithm and asset (OLS metrics = 1)" aria-label="Enlarge Figure 3. Relative validation loss by algorithm and asset (OLS metrics = 1)"><img loading="lazy" src="../assets/research/fig3_validation_vs_baseline.png" alt="Figure 3. Relative validation loss by algorithm and asset (OLS metrics = 1)" /></a><figcaption>Figure 3. Relative validation loss by algorithm and asset (OLS metrics = 1) <span class="zoom-hint">· Click to enlarge</span></figcaption></figure>
+<h4 id="experiment-3">Experiment 3: Hyperparameter Optimization</h4>
+<p>Hyperparameters were selected to minimize QLIKE, subject to RMSE not exceeding the minimum RMSE obtained for the same algorithm and asset by more than 5%. This constraint was introduced because the configurations minimizing RMSE and QLIKE did not always coincide.</p>
+<div class="paper-table-wrap"><table class="paper-table "><thead><tr><th scope="col">Asset</th><th scope="col">Algorithm</th><th scope="col">Selected parameters</th><th scope="col">Model</th><th scope="col">RMSE before</th><th scope="col">RMSE after</th><th scope="col">QLIKE before</th><th scope="col">QLIKE after</th></tr></thead><tbody><tr><td>BTC</td><td>Huber</td><td>α=0.001; ε=2.5</td><td>HAR-X</td><td>0.1901</td><td>0.1896</td><td>0.3353</td><td>0.3134</td></tr><tr><td>BTC</td><td>ElasticNet</td><td>α=0.01; L1=0.4</td><td>HAR-X</td><td>0.1908</td><td>0.1902</td><td>0.3074</td><td>0.3071</td></tr><tr><td>BTC</td><td>LinearSVR</td><td>C=0.01; ε=0.2</td><td>HAR-X-All</td><td>0.1880</td><td>0.1885</td><td>0.3150</td><td>0.2819</td></tr><tr><td>BTC</td><td>HistGB</td><td>lr=0.05; i=100; n=7</td><td>HAR-X</td><td>0.2157</td><td>0.1998</td><td>0.3489</td><td>0.3183</td></tr><tr><td>ETH</td><td>Huber</td><td>α=0.001; ε=20.0</td><td>HAR</td><td>0.2447</td><td>0.2566</td><td>0.3788</td><td>0.3375</td></tr><tr><td>ETH</td><td>ElasticNet</td><td>α=0.05; L1=0.1</td><td>HAR-X-All</td><td>0.2411</td><td>0.2418</td><td>0.2926</td><td>0.2910</td></tr><tr><td>ETH</td><td>LinearSVR</td><td>C=0.01; ε=0.25</td><td>HAR-X-All</td><td>0.2431</td><td>0.2417</td><td>0.3671</td><td>0.2729</td></tr><tr><td>ETH</td><td>HistGB</td><td>lr=0.05; i=100; n=7</td><td>HAR-X-All</td><td>0.2592</td><td>0.2525</td><td>0.3605</td><td>0.3133</td></tr></tbody><caption>Table 6. Hyperparameter optimization results</caption></table></div>
+<p class="table-note">Note. For HistGB, lr denotes learning_rate, i denotes max_iter, and n denotes max_leaf_nodes. “Before” reports the independently minimized RMSE and QLIKE values from Experiment 2; these values may correspond to different feature specifications. “After” reports both metrics for the selected tuned configuration.</p>
+<figure class="paper-figure"><a class="figure-zoom" href="../assets/research/fig4_tuning_vs_baseline.png" data-title="Figure 4. Validation performance before and after hyperparameter tuning (OLS metrics = 1)" aria-label="Enlarge Figure 4. Validation performance before and after hyperparameter tuning (OLS metrics = 1)"><img loading="lazy" src="../assets/research/fig4_tuning_vs_baseline.png" alt="Figure 4. Validation performance before and after hyperparameter tuning (OLS metrics = 1)" /></a><figcaption>Figure 4. Validation performance before and after hyperparameter tuning (OLS metrics = 1) <span class="zoom-hint">· Click to enlarge</span></figcaption></figure>
+<p>Hyperparameter tuning generally produced modest RMSE improvements, with a more substantial reduction for BTC HistGB. Improvements in QLIKE were more pronounced across several algorithms. The results suggest that hyperparameter selection can improve QLIKE even when RMSE changes only slightly or deteriorates.</p>
+<h4 id="experiment-4">Experiment 4: Ensemble Evaluation</h4>
+<p>We evaluated equally weighted and optimized weighted combinations of Huber, ElasticNet, and LinearSVR using expanding-window validation. The best ensembles provided only marginal RMSE improvements over the strongest individual models, while QLIKE showed little or no improvement. The optimal weights were often concentrated in a single estimator, suggesting limited incremental benefit from combining these models.</p>
+<h2 id="test">4. Test</h2>
+<div class="paper-table-wrap"><table class="paper-table "><thead><tr><th scope="col">Asset</th><th scope="col">Algorithm</th><th scope="col">RMSE val</th><th scope="col">RMSE test</th><th scope="col">QLIKE val</th><th scope="col">QLIKE test</th></tr></thead><tbody><tr><td>BTC</td><td>LinearSVR</td><td>0.1885</td><td>0.1122</td><td>0.2819</td><td>0.1518</td></tr><tr><td>BTC</td><td>HistGB</td><td>0.1998</td><td>0.1138</td><td>0.3183</td><td>0.1637</td></tr><tr><td>BTC</td><td>ElasticNet</td><td>0.1902</td><td>0.1184</td><td>0.3071</td><td>0.1700</td></tr><tr><td>BTC</td><td>Huber</td><td>0.1896</td><td>0.1165</td><td>0.3134</td><td>0.1773</td></tr><tr><td>BTC</td><td>OLS HAR</td><td>0.2050</td><td>0.1296</td><td>0.3393</td><td>0.2104</td></tr><tr><td>ETH</td><td>LinearSVR</td><td>0.2417</td><td>0.1728</td><td>0.2729</td><td>0.1741</td></tr><tr><td>ETH</td><td>ElasticNet</td><td>0.2418</td><td>0.1689</td><td>0.2910</td><td>0.1816</td></tr><tr><td>ETH</td><td>HistGB</td><td>0.2525</td><td>0.1684</td><td>0.3133</td><td>0.1857</td></tr><tr><td>ETH</td><td>OLS HAR</td><td>0.2566</td><td>0.1810</td><td>0.3375</td><td>0.2150</td></tr><tr><td>ETH</td><td>Huber</td><td>0.2566</td><td>0.1824</td><td>0.3375</td><td>0.2243</td></tr></tbody><caption>Table 7. Walk-forward validation and held-out test performance (RMSE and QLIKE)</caption></table></div>
+<p>The selected model configurations were evaluated on the held-out test period, which was excluded from feature selection and hyperparameter optimization.</p>
+<p>The lower test errors may partly reflect less volatile market conditions rather than an improvement in the models&#x27; underlying predictive ability. In particular, periods of elevated volatility and abrupt market movements present greater forecasting challenges. Therefore, performance differences between validation and test periods should be considered alongside comparisons with benchmark models evaluated over the same test observations.</p>
+<figure class="paper-figure"><a class="figure-zoom" href="../assets/research/fig5_test_forecasts.png" data-title="Figure 5. Actual versus predicted 24-hour RV for BTC and ETH over the final 30 days of the held-out test period. LinearSVR forecasts are compared with the OLS HAR benchmark" aria-label="Enlarge Figure 5. Actual versus predicted 24-hour RV for BTC and ETH over the final 30 days of the held-out test period. LinearSVR forecasts are compared with the OLS HAR benchmark"><img loading="lazy" src="../assets/research/fig5_test_forecasts.png" alt="Figure 5. Actual versus predicted 24-hour RV for BTC and ETH over the final 30 days of the held-out test period. LinearSVR forecasts are compared with the OLS HAR benchmark" /></a><figcaption>Figure 5. Actual versus predicted 24-hour RV for BTC and ETH over the final 30 days of the held-out test period. LinearSVR forecasts are compared with the OLS HAR benchmark <span class="zoom-hint">· Click to enlarge</span></figcaption></figure><div class="interactive-cta"><div><strong>Explore the entire held-out test</strong><p>Interactive Plotly charts, January–October 2026. Zoom, pan, inspect hourly values and toggle model traces.</p></div><div class="interactive-actions"><a href="../charts/fig5_BTC_test.html" target="_blank" rel="noopener noreferrer">BTC — interactive chart ↗</a><a href="../charts/fig5_ETH_test.html" target="_blank" rel="noopener noreferrer">ETH — interactive chart ↗</a></div></div>
+<h2 id="conclusion">5. Conclusion</h2>
+<p>This study examined the predictive value of market-derived features and compared several regression algorithms for forecasting 24-hour RV for BTC and ETH.</p>
+<p>Replacing the 30-day RV component of HAR with DVOL and incorporating day-of-week effects improved validation RMSE for both assets, although these improvements were accompanied by higher QLIKE values. Additional features, including trading volume, returns, and historical volatility percentile ranks, provided algorithm-dependent benefits rather than consistent improvements across all algorithms. The extended feature set did not provide consistent improvements across algorithms. Its benefits were more evident for regularized linear estimators, particularly LinearSVR and ElasticNet, suggesting that the effectiveness of additional predictors depends on the estimation method.</p>
+<p>On the held-out test, LinearSVR achieved the lowest RMSE and QLIKE for BTC. For ETH, HistGB achieved the lowest RMSE, while LinearSVR provided the best QLIKE.</p>
+<p>Overall, the findings suggest that feature selection, regression methodology, and the choice of evaluation metric all influence volatility forecasting performance. Improvements in one metric do not necessarily translate into improvements in another, highlighting the importance of evaluating forecasting models using multiple complementary criteria.</p>
+<p>Code and data availability: <a class="paper-inline-link" href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">GitHub repository</a>.</p>
+  </article>
+  <section class="article-cta"><h2>Explore or reproduce the experiment</h2><p>Read this study online, download its PDF and Excel reports, or reproduce the experiments using the versioned Python source.</p><a class="btn btn-primary" href="https://github.com/olegkozik/volatility_forecasting" target="_blank" rel="noopener noreferrer">View source code ↗</a> <a class="btn btn-quiet" href="https://github.com/olegkozik/volatility_forecasting/releases" target="_blank" rel="noopener noreferrer">Releases &amp; reports ↗</a></section>
+</main>
+<footer class="container footer"><span>© 2026 Volatility Lab</span><a href="../">Back to all experiments ↑</a></footer>
+<dialog id="image-dialog" aria-label="Expanded research figure"><div class="lightbox-controls"><span id="lightbox-title">Research figure</span><span><a id="lightbox-original" target="_blank" rel="noopener noreferrer">Open full resolution ↗</a> &nbsp; <button type="button" id="lightbox-close">Close ×</button></span></div><img id="lightbox-img" src="" alt=""></dialog>
+<script>
+(function(){
+  const dialog=document.getElementById('image-dialog');
+  const img=document.getElementById('lightbox-img');
+  const original=document.getElementById('lightbox-original');
+  const label=document.getElementById('lightbox-title');
+  document.querySelectorAll('.figure-zoom').forEach(link=>{
+    link.addEventListener('click',event=>{
+      if(!dialog.showModal) return;
+      event.preventDefault();
+      img.src=link.getAttribute('href');
+      img.alt=link.getAttribute('data-title')||'Research figure';
+      label.textContent=img.alt;
+      original.href=img.src;
+      dialog.showModal();
+    });
+  });
+  document.getElementById('lightbox-close').addEventListener('click',()=>dialog.close());
+  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
+  dialog.addEventListener('close',()=>{img.removeAttribute('src')});
+})();
+</script>
+</body></html>
