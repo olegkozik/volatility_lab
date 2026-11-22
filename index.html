@@ -16,7 +16,14 @@
   <title>Volatility Lab — An open ML research journal</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/styles.css">
-  <link rel="alternate" type="application/rss+xml" title="Volatility Lab — new experiments" href="feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="Volatility Lab — new experiments and notes" href="feed.xml">
+  <style>
+    /* Keep the existing link appearance while making RSS a button. */
+    .rss-copy-button { appearance:none; border:0; padding:0; background:transparent; font:inherit; cursor:pointer; text-align:left; }
+    .rss-copy-button:focus-visible { outline:2px solid #bce4d6; outline-offset:5px; border-radius:2px; }
+    .rss-copy-status { margin-left:12px; font-size:12px; color:#bce4d6; }
+    .upcoming-grid .next-card:last-child { grid-column: 1 / -1; }
+  </style>
   <!-- Volatility Lab Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KSH0YRSKS1"></script>
   <script>
@@ -58,6 +65,31 @@
       }
     }, true);
   </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const button = document.getElementById('rss-copy-button');
+      const status = document.getElementById('rss-copy-status');
+      const feedUrl = new URL('feed.xml', document.baseURI).href;
+      if (!button || !status) return;
+
+      button.addEventListener('click', async function () {
+        if (typeof gtag === 'function') {
+          gtag('event', 'rss_click', { link_url: feedUrl });
+        }
+        try {
+          if (!navigator.clipboard || !navigator.clipboard.writeText) {
+            throw new Error('Clipboard API unavailable');
+          }
+          await navigator.clipboard.writeText(feedUrl);
+          status.textContent = 'Link copied!';
+        } catch (_) {
+          // If browser permissions block clipboard access, show the URL for manual copying.
+          window.prompt('Copy this RSS feed URL:', feedUrl);
+          status.textContent = 'Paste this URL into your RSS reader.';
+        }
+      });
+    });
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -84,11 +116,12 @@
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 26px"><a class="text-link" href="experiments/01-volatility-forecasting/">Read experiment <span aria-hidden="true">→</span></a><a class="text-link" href="experiments/01-volatility-forecasting/#discussion">Join discussion <span aria-hidden="true">→</span></a></div>
       </article>
       <div class="upcoming-grid">
-        <article class="next-card"><div class="feature-top"><span class="index-number">02 / PLANNED</span><span class="pill muted">On the roadmap</span></div><h3>Seasonality & economic events</h3><p>Does intraday seasonality or the economic calendar improve forward volatility forecasts, especially during sudden market moves?</p><div class="tags"><span>Calendar</span><span>Feature engineering</span></div></article>
-        <article class="next-card"><div class="feature-top"><span class="index-number">03 / PLANNED</span><span class="pill muted">On the roadmap</span></div><h3>From forecasts to options</h3><p>Compare volatility forecasts with option prices and explore what survives realistic backtesting and risk constraints.</p><div class="tags"><span>Implied volatility</span><span>Backtesting</span></div></article>
+        <article class="next-card"><div class="feature-top"><span class="index-number">02 / PLANNED</span><span class="pill muted">On the roadmap</span></div><h3>Live volatility forecasting</h3><p>Move from offline tests to continuously updated BTC and ETH volatility forecasts, with interactive monitoring of predictions and realized volatility.</p><div class="tags"><span>Live forecasts</span><span>Monitoring</span><span>Plotly</span></div></article>
+        <article class="next-card"><div class="feature-top"><span class="index-number">03 / PLANNED</span><span class="pill muted">On the roadmap</span></div><h3>From forecasts to trading</h3><p>Compare predicted and option-implied volatility, test options strategies with realistic execution costs, and explore risk-managed trading.</p><div class="tags"><span>Options IV</span><span>Backtesting</span><span>Execution</span></div></article>
+        <article class="next-card"><div class="feature-top"><span class="index-number">SOMEDAY / FUTURE RESEARCH</span><span class="pill muted">Later</span></div><h3>Seasonality &amp; economic events</h3><p>Explore whether intraday seasonality and scheduled economic events improve volatility forecasts, particularly around large market moves.</p><div class="tags"><span>Calendar</span><span>Feature engineering</span></div></article>
       </div>
     </section>
-    <section id="about" class="about-band"><div class="container about-grid"><div><div class="eyebrow">ABOUT THE PROJECT</div><h2>Built in public,<br>without pretending to have all the answers.</h2></div><div><p>I'm learning machine learning by applying each new technique to a concrete, evolving research problem. This is a learning project, not investment advice or a claim of scientific novelty.</p><p>Code, methods and findings will be shared as experiments are completed. The goal is to understand both the successes and the failures.</p><a class="text-link light" href="feed.xml" type="application/rss+xml" aria-label="Subscribe to Volatility Lab updates via RSS">Subscribe via RSS ↗</a></div></div></section>
+    <section id="about" class="about-band"><div class="container about-grid"><div><div class="eyebrow">ABOUT THE PROJECT</div><h2>Built in public,<br>without pretending to have all the answers.</h2></div><div><p>I'm learning machine learning by applying each new technique to a concrete, evolving research problem. This is a learning project, not investment advice or a claim of scientific novelty.</p><p>Code, methods and findings will be shared as experiments are completed. The goal is to understand both the successes and the failures.</p><button id="rss-copy-button" class="text-link light rss-copy-button" type="button" aria-label="Copy the RSS feed URL to subscribe in your RSS reader">Copy RSS feed link ⧉</button><span id="rss-copy-status" class="rss-copy-status" role="status" aria-live="polite"></span></div></div></section>
   </main>
   <footer class="container footer"><span>© 2026 Volatility Lab</span><span>Research notes · Code · Open questions</span><a href="https://github.com/olegkozik">GitHub ↗</a></footer>
 </body>
