@@ -1,0 +1,40 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="aiohappyeyeballs" />
+          <option value="aiohttp" />
+          <option value="aiosignal" />
+          <option value="attrs" />
+          <option value="choreographer" />
+          <option value="contourpy" />
+          <option value="cycler" />
+          <option value="fonttools" />
+          <option value="frozenlist" />
+          <option value="idna" />
+          <option value="kaleido" />
+          <option value="kiwisolver" />
+          <option value="logistro" />
+          <option value="matplotlib" />
+          <option value="multidict" />
+          <option value="narwhals" />
+          <option value="numpy" />
+          <option value="orjson" />
+          <option value="packaging" />
+          <option value="pillow" />
+          <option value="platformdirs" />
+          <option value="plotly" />
+          <option value="propcache" />
+          <option value="pyparsing" />
+          <option value="python-dateutil" />
+          <option value="simplejson" />
+          <option value="six" />
+          <option value="yarl" />
+          <option value="duckdb" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
