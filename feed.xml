@@ -7,6 +7,13 @@
     <language>en</language>
     <atom:link href="https://olegkozik.github.io/volatility_lab/feed.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>02 — How to Read the Live Monitor</title>
+      <link>https://volforecast.com/notes/02-live-monitor/</link>
+      <guid isPermaLink="true">https://volforecast.com/notes/02-live-monitor/</guid>
+      <pubDate>Sat, 28 Nov 2026 08:17:10 GMT</pubDate>
+      <description>Compare realized volatility, 24-hour volatility forecasts, and market-implied volatility on interactive BTC and ETH charts.</description>
+    </item>
+    <item>
       <title>Experiment 01 — Forecasting 24-hour Realized Volatility</title>
       <link>https://olegkozik.github.io/volatility_lab/experiments/01-volatility-forecasting/</link>
       <guid isPermaLink="true">https://olegkozik.github.io/volatility_lab/experiments/01-volatility-forecasting/</guid>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Compare realized volatility, 24-hour volatility forecasts, and market-implied volatility on interactive BTC and ETH charts.">
+  <meta name="theme-color" content="#101e2b">
+  <link rel="canonical" href="https://volforecast.com/notes/02-live-monitor/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Volatility Lab">
+  <meta property="og:title" content="How to Read the Live Monitor">
+  <meta property="og:description" content="Compare realized volatility, 24-hour volatility forecasts, and market-implied volatility on interactive BTC and ETH charts.">
+  <meta property="og:url" content="https://volforecast.com/notes/02-live-monitor/">
+  <meta name="twitter:card" content="summary">
+  <title>How to Read the Live Monitor · Volatility Lab</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/styles.css">
+  <link rel="alternate" type="application/rss+xml" title="Volatility Lab — new experiments and notes" href="../../feed.xml">
+  <style>
+    .guide h1 { font-size: clamp(38px, 5.2vw, 62px); }
+    .guide .article-meta { margin: 26px 0 42px; }
+    .guide .article-section a { color: var(--accent-dark); text-decoration: underline; text-underline-offset: 3px; }
+    .guide .article-section ul { padding-left: 24px; color: #445860; }
+    .guide .article-section li { margin-bottom: 16px; }
+    .guide .equation { background: #fff; border: 1px solid var(--line); border-radius: 9px; text-align: center; font: 22px/1.5 Georgia, "Times New Roman", serif; padding: 14px; max-width: 370px; margin: 16px auto; }
+    .guide .fraction { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; }
+    .guide .fraction span:first-child { border-bottom: 1px solid currentColor; padding: 0 8px; }
+    .guide .fraction span:last-child { padding: 0 8px; }
+    .guide .guide-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 22px 0; }
+  </style>
+  <!-- Volatility Lab Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KSH0YRSKS1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KSH0YRSKS1');
+
+    // Custom events for the links on Volatility Lab.
+    document.addEventListener('click', function(event) {
+      const target = event.target;
+      const link = target && target.closest ? target.closest('a[href]') : null;
+      if (!link) return;
+      let destination;
+      try {
+        destination = new URL(link.getAttribute('href'), document.baseURI);
+      } catch (_) { return; }
+
+      const path = destination.pathname.toLowerCase();
+      let name = null;
+      if (path.endsWith('/feed.xml')) name = 'rss_click';
+      else if (path.endsWith('.pdf')) name = 'pdf_click';
+      else if (path.endsWith('.xlsx')) name = 'excel_file_click';
+      else if (path.endsWith('/reports/') || path.endsWith('/reports/index.html'))
+        name = 'excel_reports_click';
+      else if (path.includes('/charts/') && path.endsWith('.html'))
+        name = 'interactive_chart_click';
+      else if (path.includes('/experiments/') && destination.hash === '#discussion')
+        name = 'join_discussion_click';
+      else if (link.closest('.feature-card') && path.includes('/experiments/'))
+        name = 'read_experiment_click';
+      else if (destination.hostname === 'github.com' &&
+               path.startsWith('/olegkozik/volatility_forecasting') &&
+               !path.includes('/issues'))
+        name = 'source_code_click';
+
+      if (name && typeof gtag === 'function') {
+        gtag('event', name, { link_url: destination.href });
+      }
+    }, true);
+  </script>
+</head>
+<body>
+  <header class="site-header"><div class="container nav">
+    <a href="../../" class="brand" aria-label="Volatility Lab home"><span class="brand-mark">V<span>·</span>L</span><span>Volatility Lab</span></a>
+    <nav aria-label="Main navigation"><a href="../../#experiments">Experiments &amp; notes</a><a href="https://live.volforecast.com/" target="_blank" rel="noopener noreferrer">Live Monitor ↗</a></nav>
+  </div></header>
+  <main class="article-main container guide">
+    <a class="back-link" href="../../#experiments">← All experiments &amp; notes</a>
+    <div class="eyebrow accent">02 <span class="sep">/</span> LIVE MONITOR</div>
+    <h1>How to Read the <em>Live Monitor</em></h1>
+    <p class="article-lede">The Live Monitor displays BTC and ETH futures prices, realized volatility, a forecast for the next 24 hours, and market-implied volatility.</p>
+    <div class="guide-actions"><a class="btn btn-primary" href="https://live.volforecast.com/" target="_blank" rel="noopener noreferrer">Open Live Monitor ↗</a></div>
+    <div class="article-meta"><span>User guide</span><span>BTC / ETH</span><span>24-hour horizon</span></div>
+    <p>Select a market and a 5-minute or 1-hour interval. The history buttons adjust the displayed time range, the calendar lets you navigate to a specific date, and Latest returns you to the most recent data. All chart timestamps are displayed in UTC.</p>
+    <section class="article-section" id="rv-and-forecast">
+      <h2>Realized Volatility and Forecast</h2>
+      <p><strong>RV</strong> — realized volatility over the previous 24 hours, expressed as an annualized percentage. It is calculated using 5-minute candles. For each window, we average five variance estimates — Close/Close, Parkinson, Garman–Klass, Rogers–Satchell, and Yang–Zhang — and take the square root. On the hourly chart, the latest estimate for each completed hour is displayed.</p>
+      <p><strong>Forecast</strong> — the model's estimate of realized volatility over the next 24 hours. The public monitor displays the model selected through a comparative evaluation. Details on the features, training methodology, and test results are provided in the <a href="../../experiments/01-volatility-forecasting/">first experiment</a>.</p>
+      <p>The forecast is plotted at the end of the forecast window. For example, a forecast issued today at 12:00 UTC covers the period ending at 12:00 UTC the following day. The orange data point is plotted at that time.</p>
+      <p>Once those 24 hours have elapsed, the black RV line will show the realized volatility for the same period, allowing the monitor to calculate the forecast error.</p>
+    </section>
+    <section class="article-section" id="iv">
+      <h2>What the Red IV Line Represents</h2>
+      <p><strong>IV</strong> — implied volatility calculated from option quotes around the forward price.</p>
+      <p>For each expiration, the script selects the two nearest eligible strikes bracketing the forward price, uses the bid and ask quotes of calls and puts, and interpolates implied volatility to the forward price.</p>
+      <p>When two available expirations bracket the 24-hour horizon, the script interpolates total variance (IV² × time to expiration) between them and converts the result back into annualized volatility. If no such pair of expirations is available, the IV of the nearest available expiration is used.</p>
+      <p>The chart displays the latest available one-minute IV estimate within each 5-minute or hourly candle. Historical IV data is available from March 10, 2026.</p>
+      <p>To compare IV directly with the forecast, hide the RV line.</p>
+    </section>
+    <section class="article-section" id="errors">
+      <h2>Errors — How to Evaluate the Forecast</h2>
+      <p>The Errors panel allows you to enable two metrics independently.</p>
+      <ul>
+        <li><strong>Signed error · pp</strong> — the signed forecast error in percentage points, calculated as Forecast − Actual RV. If the forecast was 73% and realized volatility was 61%, the error is +12 pp. A positive value indicates that the model overestimated volatility, while a negative value indicates that it underestimated volatility.</li>
+        <li><strong>QLIKE</strong> — measures the discrepancy between forecast and realized volatility using the ratio of realized variance to forecast variance:</li>
+      </ul>
+      <div class="equation" role="math" aria-label="r equals RV squared divided by Forecast squared"><i>r</i> = <span class="fraction"><span>RV<sup>2</sup></span><span>Forecast<sup>2</sup></span></span></div>
+      <div class="equation" role="math" aria-label="QLIKE equals r minus natural logarithm of r minus one">QLIKE = <i>r</i> − ln(<i>r</i>) − 1</div>
+      <p>QLIKE equals zero when the forecast matches realized volatility. The Auto mode adjusts the QLIKE scale to the visible values, while Fixed 0–1 maintains a consistent scale when scrolling through historical data.</p>
+    </section>
+    <section class="article-section" id="p-rank-weekends-fomc">
+      <h2>P-rank, Weekends, and FOMC</h2>
+      <p><strong>P-rank</strong> indicates where current realized volatility stands relative to its historical values over the previous 365 days. Percentile ranks are calculated separately for 1-day, 7-day, and 30-day RV.</p>
+      <p>For example, a 1d percentile rank of 90% means that current 1-day realized volatility is higher than or equal to approximately 90% of historical 1-day RV observations within the lookback period.</p>
+      <p><strong>Weekends</strong> marks the beginning of Saturday and Monday at 00:00 UTC with dashed lines.</p>
+      <p><strong>FOMC</strong> adds star markers to candles containing the announcement times of the US Federal Open Market Committee's decisions. Hover over a star to see the exact event time in UTC.</p>
+    </section>
+    <section class="article-cta">
+      <h2>Live Monitor</h2>
+      <a class="btn btn-primary" href="https://live.volforecast.com/" target="_blank" rel="noopener noreferrer">Open Live Monitor ↗</a>
+    </section>
+  </main>
+  <footer class="container footer"><span>© 2026 Volatility Lab</span><a href="../../#experiments">Back to experiments &amp; notes ↑</a></footer>
+</body>
+</html>
